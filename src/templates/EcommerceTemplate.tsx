@@ -9,13 +9,11 @@ import { Button } from '@/components/ui/button'
 import { ShoppingCart } from 'lucide-react'
 import { useCartUI } from '@/components/CartProvider'
 import { useCart } from '@/contexts/CartContext'
-import { Input } from '@/components/ui/input'
 
 /**
  * EDITABLE TEMPLATE - EcommerceTemplate
  * 
- * Template específico para páginas de ecommerce con header, footer y cart.
- * El agente IA puede modificar completamente el diseño, colores, layout.
+ * Template colorido y moderno para talleres creativos
  */
 
 interface EcommerceTemplateProps {
@@ -42,12 +40,12 @@ export const EcommerceTemplate = ({
   const totalItems = getTotalItems()
 
   const header = (
-    <div className={`py-4 ${headerClassName}`}>
+    <div className={`py-4 border-b-2 border-border bg-background/95 backdrop-blur-md ${headerClassName}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/">
+            <Link to="/" className="font-bold text-xl text-foreground hover:text-primary transition-colors">
               <BrandLogoLeft />
             </Link>
           </div>
@@ -56,8 +54,14 @@ export const EcommerceTemplate = ({
           <div className="hidden md:flex items-center space-x-8">
             <nav className="flex space-x-6">
               <Link 
+                to="/" 
+                className="text-foreground/80 hover:text-primary font-medium transition-colors"
+              >
+                Talleres
+              </Link>
+              <Link 
                 to="/blog" 
-                className="text-foreground/70 hover:text-foreground transition-colors"
+                className="text-foreground/80 hover:text-primary font-medium transition-colors"
               >
                 Blog
               </Link>
@@ -73,12 +77,12 @@ export const EcommerceTemplate = ({
                 variant="ghost"
                 size="icon"
                 onClick={openCart}
-                className="relative"
+                className="relative hover:bg-primary/10"
                 aria-label="Ver carrito"
               >
                 <ShoppingCart className="h-5 w-5" />
                 {totalItems > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-br from-primary to-accent text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-lg">
                     {totalItems > 99 ? '99+' : totalItems}
                   </span>
                 )}
@@ -100,45 +104,61 @@ export const EcommerceTemplate = ({
   )
 
   const footer = (
-    <div className={`bg-black text-white py-12 ${footerClassName}`}>
+    <div className={`bg-gradient-to-br from-foreground via-foreground/95 to-foreground/90 text-white py-16 ${footerClassName}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Brand */}
           <div>
-            <BrandLogoLeft />
-            <p className="mt-4 text-white/70">
-              Your trusted online store
+            <div className="mb-4 text-white">
+              <BrandLogoLeft />
+            </div>
+            <p className="text-white/80 leading-relaxed">
+              Talleres creativos en Ciudad de México donde transformamos ideas en arte.
+              Únete a nuestra comunidad creativa.
             </p>
           </div>
 
           {/* Links */}
           <div>
-            <h3 className="font-semibold mb-4 text-white">Links</h3>
-            <div className="space-y-2">
+            <h3 className="font-bold text-lg mb-4 text-white">Enlaces</h3>
+            <div className="space-y-3">
               <Link 
                 to="/" 
-                className="block text-white/70 hover:text-white transition-colors"
+                className="block text-white/80 hover:text-white transition-colors"
               >
-                Home
+                Inicio
               </Link>
               <Link 
                 to="/blog" 
-                className="block text-white/70 hover:text-white transition-colors"
+                className="block text-white/80 hover:text-white transition-colors"
               >
                 Blog
               </Link>
+              <a 
+                href="#talleres" 
+                className="block text-white/80 hover:text-white transition-colors"
+              >
+                Talleres
+              </a>
             </div>
           </div>
 
-          {/* Social Links */}
+          {/* Info & Social */}
           <div>
-            <h3 className="font-semibold mb-4 text-white">Follow Us</h3>
+            <h3 className="font-bold text-lg mb-4 text-white">Síguenos</h3>
             <SocialLinks />
+            <div className="mt-6 space-y-2 text-white/80 text-sm">
+              <p>📍 Ciudad de México</p>
+              <p>🕐 Lun - Vie: 9am - 5pm</p>
+              <p>💰 $2,000 MXN por taller</p>
+            </div>
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-white/20 text-center text-white/70">
-          <p>&copy; 2024 Your Store. All rights reserved.</p>
+        <div className="mt-12 pt-8 border-t border-white/20 text-center">
+          <p className="text-white/70 text-sm">
+            &copy; 2024 Talleres Creativos. Todos los derechos reservados.
+          </p>
         </div>
       </div>
     </div>

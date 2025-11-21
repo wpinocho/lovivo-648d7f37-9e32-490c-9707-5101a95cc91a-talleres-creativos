@@ -4,8 +4,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { useCart } from "@/contexts/CartContext"
 import { useCheckout } from "@/hooks/useCheckout"
 import { useSettings } from "@/contexts/SettingsContext"
-import { Minus, Plus, Trash2 } from "lucide-react"
+import { WorkshopDateTimePicker } from "@/components/WorkshopDateTimePicker"
+import { Minus, Plus, Trash2, Calendar } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { useState } from "react"
 
 interface CartSidebarProps {
   isOpen: boolean
@@ -17,6 +19,9 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
   const navigate = useNavigate()
   const { checkout, isLoading: isCreatingOrder } = useCheckout()
   const { currencyCode } = useSettings()
+  const [selectedDate, setSelectedDate] = useState<Date>()
+  const [selectedTime, setSelectedTime] = useState<string>()
+  const [showDatePicker, setShowDatePicker] = useState(false)
 
   const handleCreateCheckout = async () => {
     try {
@@ -24,7 +29,12 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
 
       // Snapshot del carrito antes de crear la orden (el hook limpia el carrito)
       try {
-        sessionStorage.setItem('checkout_cart', JSON.stringify({ items: state.items, total: state.total }))
+        sessionStorage.setItem('checkout_cart', JSON.stringify({ 
+          items: state.items, 
+          total: state.total,
+          workshopDate: selectedDate?.toISOString(),
+          workshopTime: selectedTime
+        }))
       } catch {}
 
       console.log('Calling checkout function...')
@@ -60,123 +70,192 @@ export const CartSidebar = ({ isOpen, onClose }: CartSidebarProps) => {
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-full sm:w-96 p-0" aria-describedby="cart-description">
-        <div className="flex flex-col h-full">
-          <SheetHeader className="p-6 border-b">
-            <div className="flex items-center justify-between">
-              <SheetTitle>Shopping Cart</SheetTitle>
-            </div>
-            <div id="cart-description" className="sr-only">
-              Review and modify the products in your shopping cart
-            </div>
-          </SheetHeader>
+      <SheetContent side="right" className="w-full sm:w-96 p-0 flex flex-col" aria-describedby="cart-description">
+        <SheetHeader className="p-6 border-b flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <SheetTitle>🎨 Carrito de Talleres</SheetTitle>
+          </div>
+          <div id="cart-description" className="sr-only">
+            Revisa y reserva tus talleres creativos
+          </div>
+        </SheetHeader>
 
-          {state.items.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center p-6">
-              <div className="text-center">
-                <h3 className="text-lg font-medium text-foreground mb-2">
-                  Your cart is empty
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  Add some products to start your purchase
-                </p>
-                <Button onClick={onClose} variant="outline">
-                  Continue Shopping
-                </Button>
-              </div>
+        {state.items.length === 0 ? (
+          <div className="flex-1 flex items-center justify-center p-6">
+            <div className="text-center">
+              <div className="text-6xl mb-4">🎨</div>
+              <h3 className="text-lg font-medium text-foreground mb-2">
+                Tu carrito está vacío
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                Agrega talleres para comenzar tu experiencia creativa
+              </p>
+              <Button onClick={onClose} className="rounded-full">
+                Ver Talleres
+              </Button>
             </div>
-          ) : (
-            <>
-              {/* Cart Items */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                {state.items.map((item) => (
-                  <Card key={item.key}>
-                    <CardContent className="p-4">
-                      <div className="flex items-start space-x-3">
-                        <div className="w-16 h-16 bg-muted rounded-md overflow-hidden flex-shrink-0">
-                          {item.product.images && item.product.images.length > 0 || item.variant?.image ? (
-                            <img
-                              src={item.variant?.image || item.product.images![0]}
-                              alt={item.product.title}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
-                              No image
-                            </div>
-                          )}
-                        </div>
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Date/Time Picker Section */}
+            {!showDatePicker && (
+              <div className="p-4 border-b bg-gradient-to-br from-primary/5 to-accent/5 flex-shrink-0">
+                <Button
+                  variant="outline"
+                  className="w-full border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold rounded-full"
+                  onClick={() => setShowDatePicker(true)}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {selectedDate && selectedTime 
+                    ? `📅 Fecha seleccionada` 
+                    : 'Selecciona Fecha y Hora'
+                  }
+                </Button>
+                {selectedDate && selectedTime && (
+                  <p className="text-xs text-center mt-2 text-muted-foreground">
+                    Haz clic para cambiar tu reserva
+                  </p>
+                )}
+              </div>
+            )}
+
+            {showDatePicker && (
+              <div className="p-4 border-b bg-background flex-shrink-0 max-h-[60vh] overflow-y-auto">
+                <div className="mb-3 flex items-center justify-between">
+                  <h3 className="font-bold text-base">📅 Reserva tu Taller</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowDatePicker(false)}
+                  >
+                    Cerrar
+                  </Button>
+                </div>
+                <WorkshopDateTimePicker
+                  selectedDate={selectedDate}
+                  selectedTime={selectedTime}
+                  onSelect={(date, time) => {
+                    setSelectedDate(date)
+                    setSelectedTime(time)
+                    setTimeout(() => setShowDatePicker(false), 500)
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Cart Items - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {state.items.map((item) => (
+                <Card key={item.key} className="border-2">
+                  <CardContent className="p-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-16 h-16 bg-gradient-to-br from-muted to-muted/50 rounded-lg overflow-hidden flex-shrink-0">
+                        {item.product.images && item.product.images.length > 0 || item.variant?.image ? (
+                          <img
+                            src={item.variant?.image || item.product.images![0]}
+                            alt={item.product.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-2xl">
+                            🎨
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-sm text-foreground line-clamp-2">
+                          {item.product.title}{item.variant?.title ? ` - ${item.variant.title}` : ''}
+                        </h4>
                         
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-sm text-foreground line-clamp-2">
-                            {item.product.title}{item.variant?.title ? ` - ${item.variant.title}` : ''}
-                          </h4>
+                        <div className="flex items-center justify-between mt-3">
+                          <div className="flex items-center space-x-1">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => updateQuantity(item.key, item.quantity - 1)}
+                              className="h-7 w-7 rounded-full"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                            <span className="font-bold px-2 text-sm min-w-[2rem] text-center">
+                              {item.quantity}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => updateQuantity(item.key, item.quantity + 1)}
+                              className="h-7 w-7 rounded-full"
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
+                          </div>
                           
-                          <div className="flex items-center justify-between mt-3">
-                            <div className="flex items-center space-x-1">
-                              <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => updateQuantity(item.key, item.quantity - 1)}
-                                className="h-7 w-7"
-                              >
-                                <Minus className="h-3 w-3" />
-                              </Button>
-                              <span className="font-medium px-2 text-sm">
-                                {item.quantity}
-                              </span>
-                              <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => updateQuantity(item.key, item.quantity + 1)}
-                                className="h-7 w-7"
-                              >
-                                <Plus className="h-3 w-3" />
-                              </Button>
+                          <div className="text-right">
+                            <div className="font-bold text-sm text-primary">
+                              ${(((item.variant?.price ?? item.product.price) || 0) * item.quantity).toFixed(2)}
                             </div>
-                            
-                            <div className="text-right">
-                              <div className="font-semibold text-sm">
-                                ${(((item.variant?.price ?? item.product.price) || 0) * item.quantity).toFixed(2)}
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeItem(item.key)}
-                                className="text-destructive hover:text-destructive p-0 h-auto mt-1"
-                              >
-                                <Trash2 className="h-3 w-3" />
-                              </Button>
-                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeItem(item.key)}
+                              className="text-destructive hover:text-destructive p-0 h-auto mt-1"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
                           </div>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
 
-              {/* Order Summary */}
-              <div className="border-t p-6">
-                <div className="space-y-3">
-                  <div className="flex justify-between font-semibold text-lg">
-                    <span>Total</span>
-                    <span>${finalTotal.toFixed(2)}</span>
+            {/* Order Summary - Fixed at bottom */}
+            <div className="border-t-2 p-6 bg-background flex-shrink-0">
+              <div className="space-y-3 mb-4">
+                <div className="flex justify-between items-baseline">
+                  <span className="font-semibold text-lg">Total</span>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-primary">
+                      ${finalTotal.toFixed(2)}
+                    </div>
+                    <div className="text-xs text-muted-foreground">MXN</div>
                   </div>
                 </div>
+              </div>
 
+              {!selectedDate || !selectedTime ? (
+                <div className="space-y-3">
+                  <div className="p-3 bg-yellow-50 border-2 border-yellow-200 rounded-lg">
+                    <p className="text-sm text-center text-yellow-800 font-medium">
+                      ⚠️ Selecciona fecha y hora para continuar
+                    </p>
+                  </div>
+                  <Button 
+                    className="w-full rounded-full font-bold" 
+                    size="lg" 
+                    onClick={() => setShowDatePicker(true)}
+                    variant="outline"
+                  >
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Seleccionar Fecha y Hora
+                  </Button>
+                </div>
+              ) : (
                 <Button 
-                  className="w-full mt-4" 
+                  className="w-full rounded-full font-bold shadow-lg hover:shadow-xl transition-all" 
                   size="lg" 
                   onClick={handleCreateCheckout} 
                   disabled={isCreatingOrder}
                 >
-                  {isCreatingOrder ? 'Processing...' : 'Checkout'}
+                  {isCreatingOrder ? 'Procesando...' : 'Confirmar Reserva 🎉'}
                 </Button>
-              </div>
-            </>
-          )}
-        </div>
+              )}
+            </div>
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   )

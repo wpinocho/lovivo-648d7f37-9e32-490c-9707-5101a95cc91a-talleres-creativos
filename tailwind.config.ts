@@ -61,7 +61,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Colores personalizados para talleres creativos
+				pink: 'hsl(var(--color-pink))',
+				orange: 'hsl(var(--color-orange))',
+				yellow: 'hsl(var(--color-yellow))',
+				mint: 'hsl(var(--color-mint))',
+				blue: 'hsl(var(--color-blue))',
+				lavender: 'hsl(var(--color-lavender))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
