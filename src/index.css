@@ -18,13 +18,13 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 280 10% 15%;
 
-    /* Rosa vibrante como primary */
-    --primary: 330 85% 55%;
+    /* Rosa mexicano apagado como primary */
+    --primary: 340 55% 45%;
     --primary-foreground: 0 0% 100%;
 
-    /* Amarillo cálido como secondary */
-    --secondary: 45 100% 60%;
-    --secondary-foreground: 280 10% 15%;
+    /* Rojo vino apagado como secondary */
+    --secondary: 350 50% 35%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 280 10% 96%;
     --muted-foreground: 280 8% 45%;
@@ -43,7 +43,8 @@ All colors MUST be HSL.
     --radius: 0.75rem;
 
     /* Colores adicionales para rayas y gradientes */
-    --color-pink: 330 85% 55%;
+    --color-pink: 340 55% 45%;
+    --color-wine: 350 50% 35%;
     --color-orange: 25 95% 60%;
     --color-yellow: 45 100% 60%;
     --color-mint: 165 70% 55%;
@@ -70,11 +71,11 @@ All colors MUST be HSL.
     --popover: 280 15% 10%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 330 85% 60%;
+    --primary: 340 55% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 45 100% 65%;
-    --secondary-foreground: 280 10% 15%;
+    --secondary: 350 50% 35%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 280 15% 15%;
     --muted-foreground: 280 8% 65%;
@@ -116,11 +117,9 @@ All colors MUST be HSL.
     background: repeating-linear-gradient(
       90deg,
       hsl(var(--color-pink)) 0px,
-      hsl(var(--color-pink)) 60px,
-      hsl(var(--color-blue)) 60px,
-      hsl(var(--color-blue)) 120px,
-      hsl(var(--color-yellow)) 120px,
-      hsl(var(--color-yellow)) 180px
+      hsl(var(--color-pink)) 150px,
+      hsl(var(--color-wine)) 150px,
+      hsl(var(--color-wine)) 300px
     );
   }
 
