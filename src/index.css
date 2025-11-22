@@ -113,12 +113,14 @@ All colors MUST be HSL.
 /* Utilidades personalizadas para diseño de talleres */
 @layer utilities {
   .bg-gradient-creative {
-    background: linear-gradient(135deg, 
-      hsl(var(--color-pink)) 0%, 
-      hsl(var(--color-orange)) 25%,
-      hsl(var(--color-yellow)) 50%,
-      hsl(var(--color-mint)) 75%,
-      hsl(var(--color-blue)) 100%
+    background: repeating-linear-gradient(
+      90deg,
+      hsl(var(--color-pink)) 0px,
+      hsl(var(--color-pink)) 60px,
+      hsl(var(--color-blue)) 60px,
+      hsl(var(--color-blue)) 120px,
+      hsl(var(--color-yellow)) 120px,
+      hsl(var(--color-yellow)) 180px
     );
   }
 
